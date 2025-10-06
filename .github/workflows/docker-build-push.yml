@@ -3,7 +3,7 @@
 # ====================================================================
 # This workflow automatically deploys your BookVault application
 # when code is pushed to the main branch
-# 
+#
 # WORKFLOW OVERVIEW:
 # 1. Triggers on push to main branch
 # 2. Checks out latest code from repository
@@ -17,7 +17,7 @@
 # ====================================================================
 
 # Workflow name displayed in GitHub Actions tab
-name: Deploy to EC2
+name: CI/CD to EC2
 
 # ====================================================================
 # TRIGGER CONFIGURATION
@@ -26,7 +26,7 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - main  # Trigger on push to main branch (production deployments)
+      - main # Trigger on push to main branch (production deployments)
       # Could add other branches like 'staging' for different environments
 
 # ====================================================================
@@ -51,7 +51,7 @@ jobs:
       # Downloads your repository code to the runner
       # Includes your beautiful BookVault UI updates, Dockerfile, etc.
       - name: Checkout repo
-        uses: actions/checkout@v4  # Official GitHub action for code checkout
+        uses: actions/checkout@v4 # Official GitHub action for code checkout
 
       # STEP 2: Install Docker (if not already installed)
       # Ensures Docker Engine is available on the EC2 instance
@@ -139,21 +139,17 @@ jobs:
             docker-compose --version
           fi
 
-
-
-
-
       # STEP 4: Authenticate with Docker Hub
       # Logs into Docker Hub registry to push/pull images
       # Uses repository secrets for secure authentication
       # NOTE: This step runs AFTER Docker installation to ensure docker login command is available
       - name: Log in to Docker Hub
-        uses: docker/login-action@v2  # Official Docker login action
+        uses: docker/login-action@v2 # Official Docker login action
         with:
           # Secrets stored in GitHub repository settings
           # Navigate to: Settings > Secrets and variables > Actions
-          username: ${{ secrets.DOCKERHUB_USERNAME }}  # Your Docker Hub username
-          password: ${{ secrets.DOCKERHUB_TOKEN }}     # Docker Hub access token (not password!)
+          username: ${{ secrets.DOCKERHUB_USERNAME }} # Your Docker Hub username
+          password: ${{ secrets.DOCKERHUB_TOKEN }} # Docker Hub access token (not password!)
 
       # STEP 5: Build and Push New Image
       # Creates new Docker image with latest code and pushes to registry
@@ -162,12 +158,12 @@ jobs:
           # Build Docker image using Dockerfile in repository root
           # Tags image as 'latest' for production deployment
           # Includes all your UI improvements, dependencies, etc.
-          docker build -t dongvandat/express-books-app:latest .
-          
+          docker build -t phamvantien/sell-project:latest .
+
           # Push built image to Docker Hub registry
           # Makes image available for deployment on any server
           # Other developers/servers can pull this image
-          docker push dongvandat/express-books-app:latest
+          docker push phamvantien/sell-project:latest
 
       # STEP 6: Deploy Updated Application
       # Pulls latest image and restarts application with zero downtime
@@ -175,12 +171,12 @@ jobs:
         run: |
           # Pull the newly built image from Docker Hub
           # Ensures we're using the latest version with all updates
-          docker pull dongvandat/express-books-app:latest
-          
+          docker pull phamvantien/sell-project:latest
+
           # Gracefully stop current production containers
           # Preserves database data and handles active connections
           docker-compose -f docker-compose.prod.yml down
-          
+
           # Start updated application in detached mode (-d)
           # Uses production configuration with new image
           # Your beautiful BookVault app is now live with latest changes!
@@ -195,12 +191,12 @@ jobs:
 # ✅ Rollback capability (previous images available on Docker Hub)
 # ✅ Consistent production environment
 # ✅ Fast deployment using self-hosted runner on EC2
-# 
+#
 # SECURITY FEATURES:
 # ✅ Secrets management for Docker Hub credentials
 # ✅ Self-hosted runner (no external access to your server)
 # ✅ Production environment isolation
-# 
+#
 # TO USE THIS WORKFLOW:
 # 1. Set up self-hosted runner on your EC2 instance
 # 2. Add DOCKERHUB_USERNAME and DOCKERHUB_TOKEN to repository secrets

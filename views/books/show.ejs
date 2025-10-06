@@ -1,0 +1,79 @@
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <h2><i class="fas fa-book"></i> <%= book.title %></h2>
+        
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-user"></i> Author</h5>
+                        <p><%= book.author %></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-calendar"></i> Published Year</h5>
+                        <p><%= book.published_year %></p>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-tag"></i> Genre</h5>
+                        <p><%= book.genre %></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-info-circle"></i> Book ID</h5>
+                        <p><%= book.id %></p>
+                    </div>
+                </div>
+                
+                <% if (book.description) { %>
+                    <div class="row">
+                        <div class="col-12">
+                            <h5><i class="fas fa-align-left"></i> Description</h5>
+                            <p class="text-muted"><%= book.description %></p>
+                        </div>
+                    </div>
+                <% } %>
+                
+                <hr>
+                
+                <div class="d-flex gap-2">
+                    <a href="/books" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Books
+                    </a>
+                    <a href="/books/<%= book.id %>/edit" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Edit Book
+                    </a>
+                    <button type="button" class="btn btn-danger delete-btn" 
+                            data-book-id="<%= book.id %>" data-book-title="<%= book.title %>">
+                        <i class="fas fa-trash"></i> Delete Book
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete "<span id="bookTitle"></span>"?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

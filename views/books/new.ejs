@@ -1,0 +1,75 @@
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <h2><i class="fas fa-plus"></i> Add New Book</h2>
+        
+        <div class="card">
+            <div class="card-body">
+                <form action="/books" method="POST">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">
+                            <i class="fas fa-book"></i> Title *
+                        </label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="author" class="form-label">
+                            <i class="fas fa-user"></i> Author *
+                        </label>
+                        <input type="text" class="form-control" id="author" name="author" required>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="published_year" class="form-label">
+                                    <i class="fas fa-calendar"></i> Published Year *
+                                </label>
+                                <input type="number" class="form-control" id="published_year" name="published_year" 
+                                       min="1000" max="<%= new Date().getFullYear() %>" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="genre" class="form-label">
+                                    <i class="fas fa-tag"></i> Genre *
+                                </label>
+                                <select class="form-control" id="genre" name="genre" required>
+                                    <option value="">Select a genre</option>
+                                    <option value="Fiction">Fiction</option>
+                                    <option value="Non-Fiction">Non-Fiction</option>
+                                    <option value="Mystery">Mystery</option>
+                                    <option value="Romance">Romance</option>
+                                    <option value="Science Fiction">Science Fiction</option>
+                                    <option value="Fantasy">Fantasy</option>
+                                    <option value="Biography">Biography</option>
+                                    <option value="History">History</option>
+                                    <option value="Self-Help">Self-Help</option>
+                                    <option value="Technology">Technology</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">
+                            <i class="fas fa-align-left"></i> Description
+                        </label>
+                        <textarea class="form-control" id="description" name="description" rows="4" 
+                                  placeholder="Enter a brief description of the book (optional)"></textarea>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> Add Book
+                        </button>
+                        <a href="/books" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

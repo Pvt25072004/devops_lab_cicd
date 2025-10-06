@@ -1,0 +1,113 @@
+# ====================================================================
+# PRODUCTION DOCKER COMPOSE CONFIGURATION
+# ====================================================================
+# This file defines the production environment for BookVault app
+# Key differences from development:
+# - Uses pre-built image from Docker Hub
+# - Runs on port 80 (standard HTTP port)
+# - No volume mounting (security)
+# - Production environment variables
+# - Auto-restart on failure
+# ====================================================================
+
+services:
+  # ----------------------------------------------------------------
+  # APPLICATION SERVICE (BookVault Express.js App)
+  # ----------------------------------------------------------------
+  app:
+    # Build from Dockerfile in current directory
+    build: .
+    
+    # Use pre-built image from Docker Hub for faster deployment
+    # This image contains your beautiful BookVault application
+    image: dongvandat/express-books-app:latest
+    
+    # Port mapping: Host:Container
+    # Maps host port 80 (standard HTTP) to container port 80
+    # Users access your app via: http://your-domain.com
+    ports:
+      - "80:80"
+    
+    # Load production environment variables from .env.prod file
+    # Contains database URLs, API keys, production secrets
+    env_file:
+      - .env.prod
+    
+    # Wait for database to be ready before starting app
+    # Ensures PostgreSQL is running before Express.js starts
+    depends_on:
+      - db
+    
+    # Runtime environment variables
+    environment:
+      # Tells Node.js this is production (optimizations, error handling)
+      - NODE_ENV=production
+    
+    # Restart policy: automatically restart if container crashes
+    # Ensures high availability for your BookVault app
+    restart: unless-stopped
+    
+    # Connect to custom network for service communication
+    networks:
+      - app-network
+      
+  # ----------------------------------------------------------------  
+  # DATABASE SERVICE (PostgreSQL)
+  # ----------------------------------------------------------------
+  db:
+    # Use official PostgreSQL 15 Alpine Linux image
+    # Alpine = lightweight Linux distribution (smaller image size)
+    image: postgres:15-alpine
+    
+    # Database configuration via environment variables
+    environment:
+      # Database user (fallback to 'postgres' if DB_USER not set in .env.prod)
+      POSTGRES_USER: ${DB_USER:-postgres}
+      
+      # Database password (fallback to 'admin123' if not set)
+      # In production, use strong password from .env.prod
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-admin123}
+      
+      # Database name for your BookVault data
+      POSTGRES_DB: ${DB_NAME:-books_db}
+    
+    # Port mapping: Host:Container  
+    # Maps host port 5433 to container port 5432 (PostgreSQL default)
+    # Uses 5433 to avoid conflicts with local PostgreSQL installations
+    ports:
+      - "5433:5432"
+    
+    # Volume mounting for data persistence
+    # Maps named volume to PostgreSQL data directory
+    # Your book data survives container restarts/rebuilds
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    
+    # Restart policy: keep database running
+    restart: unless-stopped
+    
+    # Connect to same network as app for communication
+    networks:
+      - app-network
+
+# ====================================================================
+# VOLUMES CONFIGURATION
+# ====================================================================
+# Named volumes for persistent data storage
+volumes:
+  # Production database volume
+  # Stores all your book data, user information, etc.
+  # Data persists even if containers are deleted
+  postgres_prod_data:
+    driver: local  # Stored on local disk
+
+# ====================================================================
+# NETWORKS CONFIGURATION  
+# ====================================================================
+# Custom networks for service isolation and communication
+networks:
+  # Private network for app and database communication
+  # Provides isolated environment and DNS resolution
+  # App can reach database via hostname 'db'
+  app-network:
+    driver: bridge  # Default Docker network driver

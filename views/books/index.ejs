@@ -1,0 +1,171 @@
+<!-- Hero Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="bg-gradient-primary rounded-4 p-4 p-md-5 text-white position-relative overflow-hidden">
+            <div class="position-relative z-2">
+                <h1 class="display-5 fw-bold mb-3">
+                    <i class="fas fa-book-open me-3"></i>My Library Collection
+                </h1>
+                <p class="lead mb-4 opacity-90">Discover, organize, and manage your personal book collection with ease</p>
+                <a href="/books/new" class="btn btn-light btn-lg px-4 py-2 shadow-sm">
+                    <i class="fas fa-plus me-2"></i>Add New Book
+                </a>
+            </div>
+            <!-- Decorative elements -->
+            <div class="position-absolute top-0 end-0 opacity-10">
+                <i class="fas fa-book" style="font-size: 8rem; transform: rotate(15deg);"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<% if (books && books.length > 0) { %>
+    <!-- Stats Bar -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex flex-wrap gap-3 justify-content-center justify-md-start">
+                <div class="badge bg-primary fs-6 px-3 py-2">
+                    <i class="fas fa-books me-1"></i>
+                    <%= books.length %> Book<%= books.length !== 1 ? 's' : '' %>
+                </div>
+                <div class="badge bg-success fs-6 px-3 py-2">
+                    <i class="fas fa-users me-1"></i>
+                    <%= new Set(books.map(book => book.author)).size %> Author<%= new Set(books.map(book => book.author)).size !== 1 ? 's' : '' %>
+                </div>
+                <div class="badge bg-info fs-6 px-3 py-2">
+                    <i class="fas fa-tags me-1"></i>
+                    <%= new Set(books.map(book => book.genre)).size %> Genre<%= new Set(books.map(book => book.genre)).size !== 1 ? 's' : '' %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Books Grid -->
+    <div class="row g-4">
+        <% books.forEach((book, index) => { %>
+            <div class="col-sm-6 col-lg-4 col-xl-3">
+                <div class="card h-100 border-0 shadow-sm book-card" style="animation-delay: <%= index * 0.1 %>s;">
+                    <!-- Book Cover Placeholder -->
+                    <div class="card-img-top bg-gradient-primary d-flex align-items-center justify-content-center text-white position-relative" style="height: 200px;">
+                        <div class="text-center">
+                            <i class="fas fa-book-open fa-3x mb-2 opacity-75"></i>
+                            <div class="small fw-bold"><%= book.title.substring(0, 20) %><%= book.title.length > 20 ? '...' : '' %></div>
+                        </div>
+                        <!-- Genre Badge -->
+                        <span class="position-absolute top-0 end-0 badge bg-dark m-2">
+                            <i class="fas fa-tag me-1"></i><%= book.genre %>
+                        </span>
+                    </div>
+                    
+                    <div class="card-body p-3">
+                        <h6 class="card-title fw-bold text-dark mb-2 line-clamp-2">
+                            <%= book.title %>
+                        </h6>
+                        
+                        <div class="mb-3">
+                            <div class="small text-muted mb-1">
+                                <i class="fas fa-user me-1 text-primary"></i>
+                                <span class="fw-medium"><%= book.author %></span>
+                            </div>
+                            <div class="small text-muted">
+                                <i class="fas fa-calendar me-1 text-success"></i>
+                                <span><%= book.published_year %></span>
+                            </div>
+                        </div>
+                        
+                        <% if (book.description) { %>
+                            <p class="card-text small text-muted line-clamp-3 mb-3">
+                                <%= book.description.length > 80 ? book.description.substring(0, 80) + '...' : book.description %>
+                            </p>
+                        <% } %>
+                    </div>
+                    
+                    <div class="card-footer bg-transparent border-0 p-3 pt-0">
+                        <div class="d-grid gap-2">
+                            <div class="btn-group" role="group">
+                                <a href="/books/<%= book.id %>" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="/books/<%= book.id %>/edit" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" class="btn btn-outline-danger btn-sm delete-btn" 
+                                        data-book-id="<%= book.id %>" data-book-title="<%= book.title %>"
+                                        title="Delete Book">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+<% } else { %>
+    <!-- Empty State -->
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
+                        <i class="fas fa-book-open fa-3x text-muted"></i>
+                    </div>
+                </div>
+                <h3 class="text-dark mb-3">Your Library Awaits</h3>
+                <p class="text-muted mb-4 lead">Start building your personal book collection today. Track your favorite reads, discover new authors, and organize your literary journey.</p>
+                <div class="d-grid gap-2 d-md-block">
+                    <a href="/books/new" class="btn btn-primary btn-lg px-4">
+                        <i class="fas fa-plus me-2"></i>Add Your First Book
+                    </a>
+                </div>
+                <div class="mt-4">
+                    <small class="text-muted">
+                        <i class="fas fa-lightbulb me-1"></i>
+                        Tip: You can organize books by genre, author, and publication year
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+<% } %>
+
+<!-- Enhanced Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-danger text-white border-0">
+                <h5 class="modal-title" id="deleteModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Confirm Deletion
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-danger bg-opacity-10 rounded-circle p-3 me-3">
+                        <i class="fas fa-trash text-danger fa-lg"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1">Delete Book</h6>
+                        <p class="text-muted mb-0">This action cannot be undone</p>
+                    </div>
+                </div>
+                <div class="bg-light rounded p-3">
+                    <p class="mb-0">
+                        Are you sure you want to permanently delete 
+                        <strong class="text-danger">"<span id="bookTitle"></span>"</strong>?
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer border-0 gap-2">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Cancel
+                </button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i>Delete Book
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -38,7 +38,7 @@ pipeline {
                 sh '''
                 # Build the single application image from the root Dockerfile
                 # Tên image phải là phamvantien/sell-project:latest
-                docker build -t $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:latest .
+                docker build --no-cache -t $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:latest .
                 '''
             }
         }

@@ -6,13 +6,11 @@ WORKDIR /app
 
 # Copy dependency files and install
 COPY package*.json ./
+COPY server.js ./
 RUN npm install
 
 # Copy app source code
 COPY . .
-
-# Expose port your app runs on
-EXPOSE 80
 
 # Command to run your app
 CMD ["node", "server.js"]

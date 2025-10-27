@@ -15,12 +15,11 @@ services:
   # APPLICATION SERVICE (BookVault Express.js App)
   # ----------------------------------------------------------------
   app:
-    # Build from Dockerfile in current directory
-    build: .
-
-    # Use pre-built image from Docker Hub for faster deployment
-    # This image contains your beautiful BookVault application
-    image: phamvantien/sell-project:latest
+    # In CI/CD we prefer pulling a tagged image from a registry.
+    # You can override IMAGE and TAG via environment or docker-compose -f ... up
+    image: ${IMAGE:-phamvantien/sell-project}:${TAG:-latest}
+    # If you want to allow building on the host, uncomment the build line below
+    # build: .
 
     # Port mapping: Host:Container
     # Maps host port 80 (standard HTTP) to container port 80

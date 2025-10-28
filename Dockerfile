@@ -1,16 +1,15 @@
-# Use official Node.js image as base
 FROM node:18
 
-# Set working directory
 WORKDIR /app
 
-# Copy dependency files and install
-COPY package*.json ./
-COPY server.js ./
-RUN npm install
-
-# Copy app source code
+# 1. Sao chép TẤT CẢ các tệp dự án (bao gồm package.json, server.js, v.v.)
 COPY . .
 
-# Command to run your app
-CMD ["node", "/app/server.js"]
+# 2. CHỈ SAU ĐÓ mới chạy npm install
+RUN npm install
+
+# 3. Expose cổng (dựa trên tệp .env.prod của bạn)
+EXPOSE 80
+
+# 4. Chạy ứng dụng
+CMD ["node", "server.js"]

@@ -2,14 +2,15 @@ FROM node:18
 
 WORKDIR /app
 
-# 1. Sao chép TẤT CẢ các tệp dự án (bao gồm package.json, server.js, v.v.)
+# Sao chép TẤT CẢ các tệp vào
 COPY . .
 
-# 2. CHỈ SAU ĐÓ mới chạy npm install
+# --- BƯỚC GỠ LỖI: Liệt kê các tệp BÊN TRONG image ---
+RUN ls -la
+
+# Cài đặt dependencies
 RUN npm install
 
-# 3. Expose cổng (dựa trên tệp .env.prod của bạn)
 EXPOSE 80
 
-# 4. Chạy ứng dụng
 CMD ["node", "server.js"]

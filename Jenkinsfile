@@ -36,6 +36,9 @@ pipeline {
             steps {
                 echo "🧱 Building Docker image..."
                 sh '''
+                echo "--- Listing files in workspace ---"
+                ls -la
+                echo "------------------------------------"
                 # Build the single application image from the root Dockerfile
                 # Tên image phải là phamvantien/sell-project:latest
                 docker build --no-cache -t $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:latest .

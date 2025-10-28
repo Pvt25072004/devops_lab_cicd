@@ -1,7 +1,8 @@
-version: '3.9'
+version: "3.9"
 services:
   app:
     build: .
+    # image: phamvantien/sell-project:latest
     ports:
       - "3001:3001"
     env_file:
@@ -15,7 +16,7 @@ services:
       - /app/node_modules
     networks:
       - app-network
-      
+
   db:
     image: postgres:15-alpine
     environment:

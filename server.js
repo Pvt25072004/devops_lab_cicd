@@ -32,7 +32,16 @@ app.use(
     contentSecurityPolicy: false,
   })
 );
-app.use(cors());
+// server.js
+app.use(
+  cors({
+    origin: "*", // Cho phép tất cả origins (hoặc chỉ định cụ thể)
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));

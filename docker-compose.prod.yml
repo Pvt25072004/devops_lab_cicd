@@ -25,7 +25,7 @@ services:
     # Maps host port 80 (standard HTTP) to container port 80
     # Users access your app via: http://your-domain.com
     ports:
-      - "80:80"
+      - "80:3001"
 
     # Load production environment variables from .env.prod file
     # Contains database URLs, API keys, production secrets

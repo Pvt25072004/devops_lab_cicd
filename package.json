@@ -27,7 +27,9 @@
     "express-ejs-layouts": "^2.5.1",
     "helmet": "^7.0.0",
     "method-override": "^3.0.0",
-    "pg": "^8.11.3"
+    "pg": "^8.11.3",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "jest": "^29.7.0",

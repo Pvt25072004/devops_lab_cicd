@@ -16,11 +16,11 @@ const swaggerOptions = {
     servers: [
       {
         url: "http://3.106.188.212:3001",
-        description: "Development server",
+        description: "Production server",
       },
       {
-        url: "http://3.106.188.212:3001",
-        description: "Production server",
+        url: "http://localhost:3001",
+        description: "Local development",
       },
     ],
     tags: [

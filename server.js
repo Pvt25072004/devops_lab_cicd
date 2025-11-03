@@ -35,10 +35,15 @@ app.use(
 // server.js
 app.use(
   cors({
-    origin: "*", // Cho phép tất cả origins (hoặc chỉ định cụ thể)
+    origin: [
+      "http://localhost:3001",
+      "http://3.106.188.212:3001",
+      "http://127.0.0.1:3001",
+    ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "Accept"],
+    exposedHeaders: ["Content-Type"],
   })
 );
 
@@ -49,6 +54,17 @@ app.use(methodOverride("_method"));
 // ============================================================
 // SWAGGER API DOCUMENTATION
 // ============================================================
+// server.js - Trước khi setup Swagger
+app.use("/swagger", (req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
 app.use(
   "/swagger",
   swaggerUi.serve,

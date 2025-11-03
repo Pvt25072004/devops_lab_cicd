@@ -1,32 +1,32 @@
-const Book = require('../models/Book');
+const Book = require("../models/Book");
 
 const bookController = {
   // Web view methods
-  
+
   // Get all books - Web view
   getAllBooksWeb: async (req, res) => {
     try {
       const books = await Book.getAll();
-      res.render('books/index', { 
-        title: 'All Books',
+      res.render("books/index", {
+        title: "All Books",
         books,
         success: req.query.success,
-        error: req.query.error
+        error: req.query.error,
       });
     } catch (error) {
-      console.error('Error getting books:', error);
-      res.render('books/index', {
-        title: 'All Books',
+      console.error("Error getting books:", error);
+      res.render("books/index", {
+        title: "All Books",
         books: [],
-        error: 'Error retrieving books'
+        error: "Error retrieving books",
       });
     }
   },
 
   // Show new book form
   newBookForm: (req, res) => {
-    res.render('books/new', {
-      title: 'Add New Book'
+    res.render("books/new", {
+      title: "Add New Book",
     });
   },
 
@@ -35,18 +35,18 @@ const bookController = {
     try {
       const { id } = req.params;
       const book = await Book.getById(id);
-      
+
       if (!book) {
-        return res.redirect('/books?error=Book not found');
+        return res.redirect("/books?error=Book not found");
       }
 
-      res.render('books/show', {
+      res.render("books/show", {
         title: book.title,
-        book
+        book,
       });
     } catch (error) {
-      console.error('Error getting book:', error);
-      res.redirect('/books?error=Error retrieving book');
+      console.error("Error getting book:", error);
+      res.redirect("/books?error=Error retrieving book");
     }
   },
 
@@ -55,18 +55,18 @@ const bookController = {
     try {
       const { id } = req.params;
       const book = await Book.getById(id);
-      
+
       if (!book) {
-        return res.redirect('/books?error=Book not found');
+        return res.redirect("/books?error=Book not found");
       }
 
-      res.render('books/edit', {
+      res.render("books/edit", {
         title: `Edit ${book.title}`,
-        book
+        book,
       });
     } catch (error) {
-      console.error('Error getting book for edit:', error);
-      res.redirect('/books?error=Error retrieving book');
+      console.error("Error getting book for edit:", error);
+      res.redirect("/books?error=Error retrieving book");
     }
   },
 
@@ -77,9 +77,9 @@ const bookController = {
 
       // Basic validation
       if (!title || !author || !published_year || !genre) {
-        return res.render('books/new', {
-          title: 'Add New Book',
-          error: 'All required fields must be filled'
+        return res.render("books/new", {
+          title: "Add New Book",
+          error: "All required fields must be filled",
         });
       }
 
@@ -88,15 +88,15 @@ const bookController = {
         author,
         published_year: parseInt(published_year),
         genre,
-        description: description || null
+        description: description || null,
       });
 
       res.redirect(`/books?success=Book "${title}" created successfully`);
     } catch (error) {
-      console.error('Error creating book:', error);
-      res.render('books/new', {
-        title: 'Add New Book',
-        error: 'Error creating book'
+      console.error("Error creating book:", error);
+      res.render("books/new", {
+        title: "Add New Book",
+        error: "Error creating book",
       });
     }
   },
@@ -110,15 +110,15 @@ const bookController = {
       // Check if book exists
       const existingBook = await Book.getById(id);
       if (!existingBook) {
-        return res.redirect('/books?error=Book not found');
+        return res.redirect("/books?error=Book not found");
       }
 
       // Basic validation
       if (!title || !author || !published_year || !genre) {
-        return res.render('books/edit', {
+        return res.render("books/edit", {
           title: `Edit ${existingBook.title}`,
           book: existingBook,
-          error: 'All required fields must be filled'
+          error: "All required fields must be filled",
         });
       }
 
@@ -127,12 +127,12 @@ const bookController = {
         author,
         published_year: parseInt(published_year),
         genre,
-        description: description || null
+        description: description || null,
       });
 
       res.redirect(`/books/${id}?success=Book updated successfully`);
     } catch (error) {
-      console.error('Error updating book:', error);
+      console.error("Error updating book:", error);
       res.redirect(`/books/${id}?error=Error updating book`);
     }
   },
@@ -145,34 +145,48 @@ const bookController = {
       // Check if book exists
       const existingBook = await Book.getById(id);
       if (!existingBook) {
-        return res.redirect('/books?error=Book not found');
+        return res.redirect("/books?error=Book not found");
       }
 
       await Book.delete(id);
-      res.redirect('/books?success=Book deleted successfully');
+      res.redirect("/books?success=Book deleted successfully");
     } catch (error) {
-      console.error('Error deleting book:', error);
-      res.redirect('/books?error=Error deleting book');
+      console.error("Error deleting book:", error);
+      res.redirect("/books?error=Error deleting book");
     }
   },
 
-  // API methods (for potential API usage)
-  
+  // ============================================================
+  // API METHODS (with Cache-Control headers)
+  // ============================================================
+
   // Get all books - API
   getAllBooks: async (req, res) => {
     try {
       const books = await Book.getAll();
+
+      // ✅ DISABLE CACHING - Fix Swagger cache issue
+      res.set({
+        "Cache-Control":
+          "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+        Pragma: "no-cache",
+        Expires: "0",
+        "Surrogate-Control": "no-store",
+      });
+
       res.json({
         success: true,
         data: books,
-        message: 'Books retrieved successfully'
+        count: books.length, // ✅ Add count for debugging
+        timestamp: new Date().toISOString(), // ✅ Add timestamp
+        message: "Books retrieved successfully",
       });
     } catch (error) {
-      console.error('Error getting books:', error);
+      console.error("Error getting books:", error);
       res.status(500).json({
         success: false,
-        message: 'Error retrieving books',
-        error: error.message
+        message: "Error retrieving books",
+        error: error.message,
       });
     }
   },
@@ -182,25 +196,32 @@ const bookController = {
     try {
       const { id } = req.params;
       const book = await Book.getById(id);
-      
+
       if (!book) {
         return res.status(404).json({
           success: false,
-          message: 'Book not found'
+          message: "Book not found",
         });
       }
+
+      // ✅ Disable caching
+      res.set({
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+        Pragma: "no-cache",
+        Expires: "0",
+      });
 
       res.json({
         success: true,
         data: book,
-        message: 'Book retrieved successfully'
+        message: "Book retrieved successfully",
       });
     } catch (error) {
-      console.error('Error getting book:', error);
+      console.error("Error getting book:", error);
       res.status(500).json({
         success: false,
-        message: 'Error retrieving book',
-        error: error.message
+        message: "Error retrieving book",
+        error: error.message,
       });
     }
   },
@@ -208,13 +229,14 @@ const bookController = {
   // Create new book - API
   createBook: async (req, res) => {
     try {
-      const { title, author, isbn, published_year, genre, description } = req.body;
+      const { title, author, isbn, published_year, genre, description } =
+        req.body;
 
       // Basic validation
       if (!title || !author) {
         return res.status(400).json({
           success: false,
-          message: 'Title and author are required'
+          message: "Title and author are required",
         });
       }
 
@@ -224,20 +246,20 @@ const bookController = {
         isbn,
         published_year,
         genre,
-        description
+        description,
       });
 
       res.status(201).json({
         success: true,
         data: newBook,
-        message: 'Book created successfully'
+        message: "Book created successfully",
       });
     } catch (error) {
-      console.error('Error creating book:', error);
+      console.error("Error creating book:", error);
       res.status(500).json({
         success: false,
-        message: 'Error creating book',
-        error: error.message
+        message: "Error creating book",
+        error: error.message,
       });
     }
   },
@@ -246,14 +268,15 @@ const bookController = {
   updateBook: async (req, res) => {
     try {
       const { id } = req.params;
-      const { title, author, isbn, published_year, genre, description } = req.body;
+      const { title, author, isbn, published_year, genre, description } =
+        req.body;
 
       // Check if book exists
       const existingBook = await Book.getById(id);
       if (!existingBook) {
         return res.status(404).json({
           success: false,
-          message: 'Book not found'
+          message: "Book not found",
         });
       }
 
@@ -261,7 +284,7 @@ const bookController = {
       if (!title || !author) {
         return res.status(400).json({
           success: false,
-          message: 'Title and author are required'
+          message: "Title and author are required",
         });
       }
 
@@ -271,20 +294,20 @@ const bookController = {
         isbn,
         published_year,
         genre,
-        description
+        description,
       });
 
       res.json({
         success: true,
         data: updatedBook,
-        message: 'Book updated successfully'
+        message: "Book updated successfully",
       });
     } catch (error) {
-      console.error('Error updating book:', error);
+      console.error("Error updating book:", error);
       res.status(500).json({
         success: false,
-        message: 'Error updating book',
-        error: error.message
+        message: "Error updating book",
+        error: error.message,
       });
     }
   },
@@ -299,7 +322,7 @@ const bookController = {
       if (!existingBook) {
         return res.status(404).json({
           success: false,
-          message: 'Book not found'
+          message: "Book not found",
         });
       }
 
@@ -307,17 +330,17 @@ const bookController = {
 
       res.json({
         success: true,
-        message: 'Book deleted successfully'
+        message: "Book deleted successfully",
       });
     } catch (error) {
-      console.error('Error deleting book:', error);
+      console.error("Error deleting book:", error);
       res.status(500).json({
         success: false,
-        message: 'Error deleting book',
-        error: error.message
+        message: "Error deleting book",
+        error: error.message,
       });
     }
-  }
+  },
 };
 
 module.exports = bookController;

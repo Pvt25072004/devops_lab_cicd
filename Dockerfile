@@ -11,6 +11,6 @@ RUN ls -la
 # Cài đặt dependencies
 RUN npm install
 
-EXPOSE 80
+EXPOSE 3001
 
 CMD ["node", "server.js"]
